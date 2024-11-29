@@ -45,6 +45,7 @@ def upload_to_mega(pdf_path, email, password):
 # Load data from JSON file
 with open("image_urls.json", 'r', encoding='utf-8') as f:
     data = json.load(f)
+    data = data[0:8]  # Adjust to load the appropriate data, here I limit it to the first 8 papers for example
 
 # Download images from all papers
 image_paths = []
@@ -55,9 +56,14 @@ image_paths.extend(download_images(data[0]["paper1"], "paper1"))
 # Download images for paper2 onwards in their original order
 for i in range(1, len(data)):
     paper_name = f"paper{i + 1}"
-    images = data[i][paper_name]
-    image_paths.extend(download_images(images, paper_name))
-
+    
+    if data[i][paper_name]:
+        print(data[i][paper_name])
+        images = data[i][paper_name]
+        image_paths.extend(download_images(images, paper_name))
+    else:
+        print(data[i][paper_name])
+        continue
 # Create the PDF
 pdf_path = create_pdf(image_paths)
 
