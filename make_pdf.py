@@ -4,6 +4,7 @@ from io import BytesIO
 from fpdf import FPDF
 import json
 from mega import Mega
+import os
 
 # Function to download and save images
 def download_images(images, paper_name):
@@ -37,11 +38,10 @@ def upload_to_mega(pdf_path, email, password):
     # Log in to Mega
     mega = Mega()
     m = mega.login(email, password)
-    print("loading to cloud started")
+    print("Uploading to Mega cloud...")
     # Upload the PDF file to Mega
     m.upload(pdf_path)
 
-# Data from the JSON (for example purposes, we can load the JSON data here)
 # Load data from JSON file
 with open("image_urls.json", 'r', encoding='utf-8') as f:
     data = json.load(f)
@@ -50,18 +50,15 @@ with open("image_urls.json", 'r', encoding='utf-8') as f:
 image_paths = []
 
 # Download images for paper1 in the original order
-image_paths.extend(download_images(data[0]["paper1"], "paper1"))
+image_paths.extend(download_images(data[0].get("paper1", []), "paper1"))
 
 # Download images for paper2 onwards in their original order
 for i in range(1, len(data)):
     paper_name = f"paper{i + 1}"
-    
-    if data[i][paper_name]:
-        images = data[i][paper_name]
+    images = data[i].get(paper_name, [])  # Use .get() to avoid KeyError
+    if images:  # Proceed only if there are images
         image_paths.extend(download_images(images, paper_name))
-    else:
-        print([paper_name])
-        continue
+
 # Create the PDF
 pdf_path = create_pdf(image_paths)
 
@@ -71,5 +68,4 @@ password = "megaMac02335!"  # Replace with your Mega password
 upload_to_mega(pdf_path, email, password)
 
 # Optional: Remove the locally saved PDF file after uploading
-import os
 os.remove(pdf_path)
