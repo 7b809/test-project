@@ -45,7 +45,6 @@ def upload_to_mega(pdf_path, email, password):
 # Load data from JSON file
 with open("image_urls.json", 'r', encoding='utf-8') as f:
     data = json.load(f)
-    data = data[0:8]  # Adjust to load the appropriate data, here I limit it to the first 8 papers for example
 
 # Download images from all papers
 image_paths = []
