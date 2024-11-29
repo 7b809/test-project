@@ -1,31 +1,34 @@
-name: Run final_script.py on Push
+name: Upload PDF to Mega Cloud
 
 on:
   push:
-    branches: 
-      - main  # Or any branch you want to trigger the workflow
+    branches:
+      - main  # Trigger the workflow when code is pushed to the main branch
+  workflow_dispatch:  # Allow the workflow to be triggered manually
 
 jobs:
-  run-script:
-    runs-on: ubuntu-latest
+  upload-to-mega:
+    runs-on: ubuntu-latest  # Use the latest Ubuntu environment
     
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      # Step 1: Check out the repository
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-    - name: Set up Python environment
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.12'  # Specify the Python version you want
+      # Step 2: Set up Python environment
+      - name: Set up Python 3.x
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
 
-    
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests Pillow fpdf mega.py
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        
-
-    - name: Run final_script.py
-       # Use the GitHub Secret for Dropbox token
-      run: |
-        python file.py
+     
+      # Step 5: Run the Python script
+      - name: Run upload script
+        run: |
+          python make_pdf.py  # Replace with the actual Python script name
