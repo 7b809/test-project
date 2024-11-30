@@ -55,6 +55,7 @@ image_paths.extend(download_images(data[0].get("paper1", []), "paper1"))
 # Download images for paper2 onwards in their original order
 for i in range(1, len(data)):
     paper_name = f"paper{i + 1}"
+    print(paper_name) 
     images = data[i].get(paper_name, [])  # Use .get() to avoid KeyError
     if images:  # Proceed only if there are images
         image_paths.extend(download_images(images, paper_name))
