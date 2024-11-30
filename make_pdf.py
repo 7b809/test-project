@@ -55,11 +55,15 @@ image_paths.extend(download_images(data[0].get("paper1", []), "paper1"))
 # Download images for paper2 onwards in their original order
 for i in range(1, len(data)):
     paper_name = f"paper{i + 1}"
-     
-    images = data[i].get(paper_name, [])  # Use .get() to avoid KeyError
-    if images:
-        print(paper_name) # Proceed only if there are images
-        image_paths.extend(download_images(images, paper_name))
+    
+    # Check if the paper exists in the JSON structure
+    if paper_name in data[i]:
+        images = data[i].get(paper_name, [])  # Fetch images safely
+        if images:
+            print(f"Processing {paper_name}...")
+            image_paths.extend(download_images(images, paper_name))
+    else:
+        print(f"{paper_name} not found, skipping...")
 
 # Create the PDF
 pdf_path = create_pdf(image_paths)
