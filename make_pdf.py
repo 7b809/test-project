@@ -46,6 +46,12 @@ def upload_to_mega(pdf_path, email, password):
 with open("image_urls.json", 'r', encoding='utf-8') as f:
     data = json.load(f)
 
+
+paper_list = []
+
+for list_item_obj in data:
+    for key in list_item_obj:
+        paper_list.append(key)
 # Download images from all papers
 image_paths = []
 
@@ -54,16 +60,10 @@ image_paths.extend(download_images(data[0].get("paper1", []), "paper1"))
 
 # Download images for paper2 onwards in their original order
 for i in range(1, len(data)):
-    paper_name = f"paper{i + 1}"
-    
-    # Check if the paper exists in the JSON structure
-    if paper_name in data[i]:
-        images = data[i].get(paper_name, [])  # Fetch images safely
-        if images:
-            print(f"Processing {paper_name}...")
-            image_paths.extend(download_images(images, paper_name))
-    else:
-        print(f"{paper_name} not found, skipping...")
+    paper_name = paper_list[i]
+    images = data[i].get(paper_name, [])  # Use .get() to avoid KeyError
+    if images:  # Proceed only if there are images
+        image_paths.extend(download_images(images, paper_name))
 
 # Create the PDF
 pdf_path = create_pdf(image_paths)
